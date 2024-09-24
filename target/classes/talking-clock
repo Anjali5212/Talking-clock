@@ -1,0 +1,73 @@
+
+hour=$(echo "$1" | awk -F: '{print $1}')
+minutes=$(echo "$1" | awk -F: '{print $2}')
+if [[ $1 == "" ]]
+then
+    hour=`date +%-H`
+    minutes=`date +%-M`
+fi
+
+
+if [[ $hour -eq 0 ]] 
+then 
+    let "hour = 12"
+fi
+
+time_less_twenty=(Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Quarter Sixteen Seventeen Eighteen Nineteen)
+
+if [[ $minutes -gt 30 ]]
+then
+    let "hour += 1"
+fi
+
+if [[ $hour -gt 12 ]] 
+then 
+    let "hour -= 12"
+fi
+
+hour_word=${time_less_twenty[$hour]}
+
+
+
+if [[ $minutes -eq 0 ]] 
+then 
+    minutes_word="o'clock"
+    finaltime="$hour_word $minutes_word"
+    echo $finaltime
+elif [[ $minutes -lt 20 ]]
+    then 
+        minutes_word=${time_less_twenty[$minutes]} 
+        finaltime="$minutes_word past $hour_word"
+        echo $finaltime
+elif [[ $minutes -lt 30 ]]
+    then 
+        twenty_plus=`expr $minutes-20`
+        twenty_plus_word=${time_less_twenty[$twenty_plus]}
+        if [[ $twenty_plus -eq 0 ]]
+            then 
+                twenty_plus_word=""
+            fi
+        finaltime="Twenty $twenty_plus_word past $hour_word"
+        echo $finaltime
+elif [[ $minutes -eq 30 ]]
+    then 
+        finaltime="Half past $hour_word"
+        echo $finaltime
+elif [[ $minutes -lt 41 ]]
+    then
+        sixty_minus=`expr 60 - $minutes`
+        forty_minus=`expr $sixty_minus - 20`
+        forty_minus_word=${time_less_twenty[$forty_minus]}
+        if [[ $forty_minus -eq 0 ]]
+            then 
+                forty_minus_word=""
+        fi 
+        finaltime="Twenty $forty_minus_word to $hour_word"
+        echo $finaltime
+else
+    forty_plus=`expr 60-$minutes` 
+    minutes_word=${time_less_twenty[$forty_plus]} 
+    finaltime="$minutes_word to $hour_word"
+    echo $finaltime   
+fi
+
